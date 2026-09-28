@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Touch Long Press Right Click
+Exec=/usr/bin/python3 /usr/local/bin/touch_right_click.py
+Terminal=false
+StartupNotify=false
