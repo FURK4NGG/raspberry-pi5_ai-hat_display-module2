@@ -25,7 +25,7 @@ killall -9 matchbox-keyboard 2>/dev/null
 matchbox-keyboard &  
 
 
-auto start
+auto start  
 mkdir -p ~/.config/autostart   
 
 
