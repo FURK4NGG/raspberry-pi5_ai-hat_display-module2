@@ -1,0 +1,12 @@
+[Unit]
+Description=Delayed Load for Hailo PCIe Driver
+After=graphical.target multi-user.target
+
+[Service]
+Type=oneshot
+ExecStartPre=/bin/sleep 5
+ExecStart=/sbin/modprobe hailo_pci
+RemainAfterExit=yes
+
+[Install]
+WantedBy=graphical.target
