@@ -1,6 +1,8 @@
 [Desktop Entry]
 Type=Application
-Name=Touch Long Press Right Click
+Name=Touch Gestures Helper
+Comment=Universal Long-Press Right Click and Two-Finger Scroll
 Exec=/usr/bin/python3 /usr/local/bin/touch_right_click.py
 Terminal=false
 StartupNotify=false
+X-GNOME-Autostart-enabled=true
