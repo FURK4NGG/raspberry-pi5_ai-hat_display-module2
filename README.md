@@ -10,8 +10,7 @@ python3 /usr/local/bin/touch_right_click.py
 
 
 auto start
-mkdir -p ~/.config/autostart  
-~/.config/autostart/touch-rightclick.desktop  
+mkdir -p ~/.config/autostart   
 
 sudo reboot
 
