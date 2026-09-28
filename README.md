@@ -1,5 +1,17 @@
 # raspberry-pi5_ai-hat_display-module2
 
+Directory Structures  
+/usr/local/bin/touch_right_click.py  
+~/.config/autostart/touch-rightclick.desktop  
+
+/boot/firmware/config.txt  
+/boot/firmware/cmdline.txt  
+/etc/modprobe.d/hailo-blacklist.conf  
+/etc/systemd/system/hailo-delayed-load.service  
+
+
+
+
 sudo apt update  
 sudo apt install -y python3-evdev python3-pynput  
 sudo usermod -aG input $USER  
