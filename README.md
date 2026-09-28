@@ -17,3 +17,12 @@ sudo reboot
 
 Control  
 pgrep -af touch_right_click  
+
+
+# Fast Installation  
+
+sudo pacman -Syu git  
+git clone https://github.com/FURK4NGG/raspberry-pi5_ai-hat_display-module2.git  
+cd raspberry-pi5_ai-hat_display-module2  
+chmod +x install.sh  
+./install.sh  
