@@ -1,0 +1,89 @@
+<keyboard>
+
+<options>
+</options>
+
+<layout id="Default">
+
+  <!-- Satır 1: Esc, Rakamlar, Backspace -->
+  <row>
+    <key fill="true" width="1500"><default type="action" action="escape" display="Esc"/></key>
+    <key><default display="1">1</default><shifted display="!">!</shifted></key>
+    <key><default display="2">2</default><shifted display="@">@</shifted></key>
+    <key><default display="3">3</default><shifted display="#">#</shifted></key>
+    <key><default display="4">4</default><shifted display="$">$</shifted></key>
+    <key><default display="5">5</default><shifted display="%">%</shifted></key>
+    <key><default display="6">6</default><shifted display="^">^</shifted></key>
+    <key><default display="7">7</default><shifted display="&amp;">&amp;</shifted></key>
+    <key><default display="8">8</default><shifted display="*">*</shifted></key>
+    <key><default display="9">9</default><shifted display="(">(</shifted></key>
+    <key><default display="0">0</default><shifted display=")">)</shifted></key>
+    <key><default display="-">-</default><shifted display="_">_</shifted></key>
+    <key><default display="=">=</default><shifted display="+">+</shifted></key>
+    <key fill="true" width="2000"><default type="action" action="backspace" display="Bksp"/></key>
+  </row>
+
+  <!-- Satır 2: Tab, QWERTY Üst Sıra -->
+  <row>
+    <key fill="true" width="1800"><default type="action" action="tab" display="Tab"/></key>
+    <key><default display="q">q</default><shifted display="Q">Q</shifted></key>
+    <key><default display="w">w</default><shifted display="W">W</shifted></key>
+    <key><default display="e">e</default><shifted display="E">E</shifted></key>
+    <key><default display="r">r</default><shifted display="R">R</shifted></key>
+    <key><default display="t">t</default><shifted display="T">T</shifted></key>
+    <key><default display="y">y</default><shifted display="Y">Y</shifted></key>
+    <key><default display="u">u</default><shifted display="U">U</shifted></key>
+    <key><default display="i">i</default><shifted display="I">I</shifted></key>
+    <key><default display="o">o</default><shifted display="O">O</shifted></key>
+    <key><default display="p">p</default><shifted display="P">P</shifted></key>
+    <key><default display="[">[</default><shifted display="{">{</shifted></key>
+    <key><default display="]">]</default><shifted display="}">}</shifted></key>
+    <key><default display="\">\</default><shifted display="|">|</shifted></key>
+  </row>
+
+  <!-- Satır 3: Caps Lock, QWERTY Orta Sıra, Enter -->
+  <row>
+    <key fill="true" width="2000"><default type="action" action="Caps_Lock" display="Caps"/></key>
+    <key><default display="a">a</default><shifted display="A">A</shifted></key>
+    <key><default display="s">s</default><shifted display="S">S</shifted></key>
+    <key><default display="d">d</default><shifted display="D">D</shifted></key>
+    <key><default display="f">f</default><shifted display="F">F</shifted></key>
+    <key><default display="g">g</default><shifted display="G">G</shifted></key>
+    <key><default display="h">h</default><shifted display="H">H</shifted></key>
+    <key><default display="j">j</default><shifted display="J">J</shifted></key>
+    <key><default display="k">k</default><shifted display="K">K</shifted></key>
+    <key><default display="l">l</default><shifted display="L">L</shifted></key>
+    <key><default display=";">;</default><shifted display=":">:</shifted></key>
+    <key><default display="'">'</default><shifted display="&quot;">&quot;</shifted></key>
+    <key fill="true" width="2500"><default type="action" action="return" display="Enter"/></key>
+  </row>
+
+  <!-- Satır 4: Shift, QWERTY Alt Sıra, Yukarı Yön Oku -->
+  <row>
+    <key fill="true" width="2500"><default type="action" action="Shift_L" display="Shift"/></key>
+    <key><default display="z">z</default><shifted display="Z">Z</shifted></key>
+    <key><default display="x">x</default><shifted display="X">X</shifted></key>
+    <key><default display="c">c</default><shifted display="C">C</shifted></key>
+    <key><default display="v">v</default><shifted display="V">V</shifted></key>
+    <key><default display="b">b</default><shifted display="B">B</shifted></key>
+    <key><default display="n">n</default><shifted display="N">N</shifted></key>
+    <key><default display="m">m</default><shifted display="M">M</shifted></key>
+    <key><default display=",">,</default><shifted display="&lt;">&lt;</shifted></key>
+    <key><default display=".">.</default><shifted display="&gt;">&gt;</shifted></key>
+    <key><default display="/">/</default><shifted display="?">?</shifted></key>
+    <key fill="true" width="1500"><default type="action" action="up" display="Up"/></key>
+  </row>
+
+  <!-- Satır 5: Ctrl, Alt, Space, Sol, Aşağı, Sağ Yön Okları -->
+  <row>
+    <key fill="true" width="2000"><default type="action" action="Control_L" display="Ctrl"/></key>
+    <key fill="true" width="1500"><default type="action" action="Alt_L" display="Alt"/></key>
+    <key fill="true" width="6000"><default type="action" action="space" display="Space"/></key>
+    <key fill="true" width="1200"><default type="action" action="left" display="Left"/></key>
+    <key fill="true" width="1200"><default type="action" action="down" display="Down"/></key>
+    <key fill="true" width="1200"><default type="action" action="right" display="Right"/></key>
+  </row>
+
+</layout>
+
+</keyboard>
