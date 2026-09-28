@@ -1,4 +1,4 @@
-# raspberry-pi5_ai-hat_display_module2
+# raspberry-pi5_ai-hat_display-module2
 
 sudo apt update  
 sudo apt install -y python3-evdev python3-pynput  
