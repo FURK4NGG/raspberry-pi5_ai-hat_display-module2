@@ -21,16 +21,15 @@
 ![raspberry-pi5_ai-hat_display-module2 Demo Image](https://github.com/FURK4NGG/raspberry-pi5_ai-hat_display-module2/blob/main/%7B%7D/raspberry-pi5_ai-hat_display-module2_10.webp)
 
 Directory Structures  
-/usr/local/bin/touch_right_click.py  
-~/.config/autostart/touch-rightclick.desktop  
-
-/boot/firmware/config.txt  
-/boot/firmware/cmdline.txt  
-/etc/modprobe.d/hailo-blacklist.conf  
-/etc/systemd/system/hailo-delayed-load.service  
-
-~/.matchbox/keyboard.xml  
-
+├── /usr/local/bin/touch_right_click.py  
+├── ~/.config/autostart/touch-rightclick.desktop  
+├  
+├── /boot/firmware/config.txt  
+├── /boot/firmware/cmdline.txt  
+├── /etc/modprobe.d/hailo-blacklist.conf  
+├── /etc/systemd/system/hailo-delayed-load.service  
+├  
+└── ~/.matchbox/keyboard.xml  
 
 
 
