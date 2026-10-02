@@ -30,7 +30,9 @@ Directory Structures
 ├── /etc/modprobe.d/hailo-blacklist.conf  
 ├── /etc/systemd/system/hailo-delayed-load.service  
 ├  
-└── ~/.matchbox/keyboard.xml  
+├── ~/.matchbox/keyboard.xml  
+└── ~/.config/openbox/lxde-pi-rc.xml  
+
 
 
 ```
