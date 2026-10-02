@@ -33,17 +33,24 @@ Directory Structures
 └── ~/.matchbox/keyboard.xml  
 
 
-
+```
 sudo apt update  
 sudo apt install -y python3-evdev python3-pynput matchbox-keyboard xdotool xkbset  
 sudo usermod -aG input $USER  
 
-sudo chmod +x /usr/local/bin/touch_right_click.py  
-RUN  
-python3 /usr/local/bin/touch_right_click.py  
+sudo chmod +x /usr/local/bin/touch_right_click.py
+```
+
+Run Touch Movements  
+```
+python3 /usr/local/bin/touch_right_click.py
+```
+
+Run Keyboard  
+```
 killall -9 matchbox-keyboard 2>/dev/null  
 matchbox-keyboard &  
-
+```
 
 auto start  
 mkdir -p ~/.config/autostart   
@@ -59,14 +66,17 @@ grep -qxF "xkbset accessx sticky -twokey -latchto" ~/.xsessionrc 2>/dev/null || 
 sudo reboot
 
 
-Control  
+Touch Movements Control  
+```
 pgrep -af touch_right_click  
-
+```
 
 # Fast Installation  
 
+```
 sudo pacman -Syu git  
 git clone https://github.com/FURK4NGG/raspberry-pi5_ai-hat_display-module2.git  
 cd raspberry-pi5_ai-hat_display-module2  
 chmod +x install.sh  
 ./install.sh  
+```
