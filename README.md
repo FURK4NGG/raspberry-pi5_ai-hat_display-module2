@@ -30,7 +30,7 @@ Directory Structures
 ├── /etc/modprobe.d/hailo-blacklist.conf  
 ├── /etc/systemd/system/hailo-delayed-load.service  
 ├  
-├── ~/.matchbox/keyboard.xml  
+├── /usr/share/matchbox-keyboard/keyboard.xml  
 └── ~/.config/openbox/lxde-pi-rc.xml  
 
 
@@ -62,8 +62,12 @@ mkdir -p ~/.config/autostart
 xkbset accessx sticky -twokey -latchto  
 
 # Her masaüstü açılışında kalıcı olması için:  
-grep -qxF "xkbset accessx sticky -twokey -latchto" ~/.xsessionrc 2>/dev/null || echo "xkbset accessx sticky -twokey -latchto" >> ~/.xsessionrc  
+grep -qxF "xkbset accessx sticky -twokey -latchto" ~/.xsessionrc 2>/dev/null || echo "xkbset accessx sticky -twokey -latchto" >> ~/.xsessionrc
+grep -qxF "xset r rate 250 35" ~/.xsessionrc 2>/dev/null || echo "xset r rate 250 35" >> ~/.xsessionrc
 
+Control  
+>xkbset accessx sticky -twokey -latchto  
+>xset r rate 250 35  
 
 sudo reboot
 
