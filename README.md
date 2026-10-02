@@ -62,6 +62,11 @@ killall -9 matchbox-keyboard 2>/dev/null
 matchbox-keyboard &  
 ```
 
+Run light-locker  
+```
+light-locker &
+```
+
 Run Brightness Panel  
 ```
 python3 /usr/local/bin/quick-panel.py &
