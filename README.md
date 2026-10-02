@@ -30,6 +30,10 @@ Directory Structures
 ├── /etc/modprobe.d/hailo-blacklist.conf  
 ├── /etc/systemd/system/hailo-delayed-load.service  
 ├  
+/usr/local/bin/quick-panel.py  
+
+/usr/local/bin/lock-sleep.sh
+
 ├── /usr/share/matchbox-keyboard/keyboard.xml  
 └── ~/.config/openbox/lxde-pi-rc.xml  
 
@@ -37,10 +41,14 @@ Directory Structures
 
 ```
 sudo apt update  
-sudo apt install -y python3-evdev python3-pynput matchbox-keyboard xdotool xkbset  
+sudo apt install -y python3-evdev python3-pynput matchbox-keyboard xdotool xkbset light-locker
+  
 sudo usermod -aG input $USER  
 
+sudo chmod 666 /sys/class/backlight/*/brightness 2>/dev/null
+
 sudo chmod +x /usr/local/bin/touch_right_click.py
+sudo chmod +x /usr/local/bin/quick-panel.py
 ```
 
 Run Touch Movements  
@@ -54,6 +62,12 @@ killall -9 matchbox-keyboard 2>/dev/null
 matchbox-keyboard &  
 ```
 
+Run Brightness Panel  
+```
+python3 /usr/local/bin/quick-panel.py &
+```
+
+
 auto start  
 mkdir -p ~/.config/autostart   
 
@@ -64,6 +78,8 @@ xkbset accessx sticky -twokey -latchto
 # Her masaüstü açılışında kalıcı olması için:  
 grep -qxF "xkbset accessx sticky -twokey -latchto" ~/.xsessionrc 2>/dev/null || echo "xkbset accessx sticky -twokey -latchto" >> ~/.xsessionrc
 grep -qxF "xset r rate 250 35" ~/.xsessionrc 2>/dev/null || echo "xset r rate 250 35" >> ~/.xsessionrc
+
+grep -qxF "python3 /usr/local/bin/quick-panel.py &" ~/.xsessionrc 2>/dev/null || echo "python3 /usr/local/bin/quick-panel.py &" >> ~/.xsessionrc
 
 Control  
 >xkbset accessx sticky -twokey -latchto  
