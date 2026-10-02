@@ -67,6 +67,23 @@ Run Brightness Panel
 python3 /usr/local/bin/quick-panel.py &
 ```
 
+Create Brightness Panel Desktop Shortcut  
+```
+cat << 'EOF' > ~/Desktop/quick-panel.desktop
+[Desktop Entry]
+Type=Application
+Name=Quick Panel
+Comment=Parlaklık ve Kilit Kontrolü
+Exec=python3 /usr/local/bin/quick-panel.py
+Icon=preferences-system
+Terminal=false
+Categories=Utility;Settings;
+EOF
+
+chmod +x ~/Desktop/quick-panel.desktop
+# Sistem menüsüne de ekle:
+sudo cp ~/Desktop/quick-panel.desktop /usr/share/applications/
+```
 
 auto start  
 mkdir -p ~/.config/autostart   
