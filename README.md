@@ -20,6 +20,7 @@
 
 ![raspberry-pi5_ai-hat_display-module2 Demo Image](https://github.com/FURK4NGG/raspberry-pi5_ai-hat_display-module2/blob/main/%7B%7D/raspberry-pi5_ai-hat_display-module2_10.webp)
 
+## 📦 Setup  
 Directory Structures  
 ├── /usr/local/bin/touch_right_click.py  
 ├── ~/.config/autostart/touch-rightclick.desktop  
