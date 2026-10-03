@@ -41,20 +41,60 @@ Directory Structures
 
 ```
 sudo apt update  
-sudo apt install -y python3-evdev python3-pynput matchbox-keyboard xdotool xkbset light-locker
+sudo apt install -y python3-evdev python3-pynput python3-tk matchbox-keyboard xdotool xkbset light-locker
   
 sudo usermod -aG input $USER  
 
-sudo chmod 666 /sys/class/backlight/*/brightness 2>/dev/null
+sudo chmod 666 /sys/class/backlight/*/brightness 2>/dev/null || true
 
 sudo chmod +x /usr/local/bin/touch_right_click.py
 sudo chmod +x /usr/local/bin/quick-panel.py
+sudo chmod +x /usr/local/bin/lock-sleep.sh
 ```
 <br>
 
+Create Brightness Panel Desktop Shortcut  
+```
+cat << 'EOF' > ~/Desktop/quick-panel.desktop
+[Desktop Entry]
+Type=Application
+Name=Quick Panel
+Comment=Parlaklık ve Kilit Kontrolü
+Exec=python3 /usr/local/bin/quick-panel.py
+Icon=preferences-system
+Terminal=false
+Categories=Utility;Settings;
+EOF
+
+chmod +x ~/Desktop/quick-panel.desktop
+sudo cp ~/Desktop/quick-panel.desktop /usr/share/applications/
+```
+
+auto start  
+```
+mkdir -p ~/.config/autostart
+```
+
+# Her masaüstü açılışında kalıcı olması için:  
+```
+# Sticky Keys & Timeout Prevention
+grep -qxF "xkbset accessx sticky -twokey -latchto" ~/.xsessionrc 2>/dev/null || echo "xkbset accessx sticky -twokey -latchto" >> ~/.xsessionrc
+grep -qxF "xkbset exp =sticky" ~/.xsessionrc 2>/dev/null || echo "xkbset exp =sticky" >> ~/.xsessionrc
+
+# Continuous Key Auto-Repeat
+grep -qxF "xset r rate 250 35" ~/.xsessionrc 2>/dev/null || echo "xset r rate 250 35" >> ~/.xsessionrc
+
+# Autostart Quick Panel
+grep -qxF "python3 /usr/local/bin/quick-panel.py &" ~/.xsessionrc 2>/dev/null || echo "python3 /usr/local/bin/quick-panel.py &" >> ~/.xsessionrc
+```
+
+sudo reboot
+
+
+
 Run Touch Movements  
 ```
-python3 /usr/local/bin/touch_right_click.py
+python3 /usr/local/bin/touch_right_click.py &
 ```
 <br>
 
@@ -76,52 +116,16 @@ Run Brightness Panel
 python3 /usr/local/bin/quick-panel.py &
 ```
 
-Create Brightness Panel Desktop Shortcut  
-```
-cat << 'EOF' > ~/Desktop/quick-panel.desktop
-[Desktop Entry]
-Type=Application
-Name=Quick Panel
-Comment=Parlaklık ve Kilit Kontrolü
-Exec=python3 /usr/local/bin/quick-panel.py
-Icon=preferences-system
-Terminal=false
-Categories=Utility;Settings;
-EOF
-
-chmod +x ~/Desktop/quick-panel.desktop
-# Sistem menüsüne de ekle:
-sudo cp ~/Desktop/quick-panel.desktop /usr/share/applications/
-```
-
-auto start  
-```
-mkdir -p ~/.config/autostart
-```
-
-```
-xkbset accessx sticky -twokey -latchto  
-```
-
-# Her masaüstü açılışında kalıcı olması için:  
-```
-grep -qxF "xkbset accessx sticky -twokey -latchto" ~/.xsessionrc 2>/dev/null || echo "xkbset accessx sticky -twokey -latchto" >> ~/.xsessionrc
-grep -qxF "xset r rate 250 35" ~/.xsessionrc 2>/dev/null || echo "xset r rate 250 35" >> ~/.xsessionrc
-
-grep -qxF "python3 /usr/local/bin/quick-panel.py &" ~/.xsessionrc 2>/dev/null || echo "python3 /usr/local/bin/quick-panel.py &" >> ~/.xsessionrc
-```
-
-Control  
->xkbset accessx sticky -twokey -latchto  
->xset r rate 250 35  
-
-sudo reboot
-
-
 Touch Movements Control  
 ```
 pgrep -af touch_right_click  
 ```
+
+Apply Openbox Rules  
+```
+openbox --reconfigure
+```
+
 
 # Fast Installation  
 
