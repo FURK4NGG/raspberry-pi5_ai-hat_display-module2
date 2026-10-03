@@ -59,7 +59,7 @@ cat << 'EOF' > ~/Desktop/quick-panel.desktop
 [Desktop Entry]
 Type=Application
 Name=Quick Panel
-Comment=Parlaklık ve Kilit Kontrolü
+Comment=Brightness and Screen Lock Control
 Exec=python3 /usr/local/bin/quick-panel.py
 Icon=preferences-system
 Terminal=false
@@ -67,6 +67,7 @@ Categories=Utility;Settings;
 EOF
 
 chmod +x ~/Desktop/quick-panel.desktop
+# Also add to system menu:
 sudo cp ~/Desktop/quick-panel.desktop /usr/share/applications/
 ```
 
@@ -75,7 +76,7 @@ auto start
 mkdir -p ~/.config/autostart
 ```
 
-# Her masaüstü açılışında kalıcı olması için:  
+## Make persistent on every desktop launch:  
 ```
 # Sticky Keys & Timeout Prevention
 grep -qxF "xkbset accessx sticky -twokey -latchto" ~/.xsessionrc 2>/dev/null || echo "xkbset accessx sticky -twokey -latchto" >> ~/.xsessionrc
@@ -90,7 +91,7 @@ grep -qxF "python3 /usr/local/bin/quick-panel.py &" ~/.xsessionrc 2>/dev/null ||
 
 sudo reboot
 
-
+<br><br>
 
 Run Touch Movements  
 ```
