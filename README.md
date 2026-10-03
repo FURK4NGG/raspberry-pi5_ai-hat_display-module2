@@ -50,22 +50,26 @@ sudo chmod 666 /sys/class/backlight/*/brightness 2>/dev/null
 sudo chmod +x /usr/local/bin/touch_right_click.py
 sudo chmod +x /usr/local/bin/quick-panel.py
 ```
+
 <br>
 Run Touch Movements  
 ```
 python3 /usr/local/bin/touch_right_click.py
 ```
+
 <br>
 Run Keyboard  
 ```
 killall -9 matchbox-keyboard 2>/dev/null  
 matchbox-keyboard &  
 ```
+
 <br>
 Run light-locker  
 ```
 light-locker &
 ```
+
 <br>
 Run Brightness Panel  
 ```
