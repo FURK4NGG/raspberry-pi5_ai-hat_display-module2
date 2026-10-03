@@ -93,7 +93,7 @@ grep -qxF "python3 /usr/local/bin/quick-panel.py &" ~/.xsessionrc 2>/dev/null ||
 ```
 sudo reboot
 ```
-<br><br>
+<br>
 
 ## 🎉 Run  
 Run Touch Movements  
