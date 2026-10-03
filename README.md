@@ -131,6 +131,41 @@ openbox --reconfigure
 ```
 
 
+koreader  
+```
+# 1. ARM64 için güncel .deb indirme bağlantısını çek ve indir
+URL=$(curl -s https://api.github.com/repos/koreader/koreader/releases/latest | grep "browser_download_url.*arm64.*\.deb" | cut -d '"' -f 4 | head -n 1)
+wget -O koreader.deb "$URL"
+
+# 2. Paketi kur
+sudo dpkg -i koreader.deb
+
+# 3. Bağımlılıkları tamamla
+sudo apt install -f -y
+
+# 4. Kurulum dosyasını sil
+rm -f koreader.deb
+```
+
+Run  
+```
+koreader &
+```
+
+```
+cat << 'EOF' > ~/Desktop/koreader.desktop
+[Desktop Entry]
+Type=Application
+Name=KOReader
+Comment=E-Book Reader
+Exec=koreader -w 800x600
+Icon=accessories-dictionary
+Terminal=false
+Categories=Office;Viewer;
+EOF
+```
+
+
 # Fast Installation  
 
 ```
