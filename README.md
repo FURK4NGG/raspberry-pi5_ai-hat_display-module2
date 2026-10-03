@@ -1,4 +1,5 @@
 ## 👀 raspberry-pi5_ai-hat_display-module2 Overview  
+This setup provides a complete system configuration for Raspberry Pi 5 with AI HAT and touchscreen module, featuring touch right-click emulation, a customized persistent virtual keyboard, a quick brightness/sleep control panel, and stable PCIe AI accelerator startup optimizations
 
 ![raspberry-pi5_ai-hat_display-module2 Demo Image](https://github.com/FURK4NGG/raspberry-pi5_ai-hat_display-module2/blob/main/%7B%7D/raspberry-pi5_ai-hat_display-module2_1.webp)
 
