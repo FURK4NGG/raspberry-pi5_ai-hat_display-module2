@@ -50,23 +50,23 @@ sudo chmod 666 /sys/class/backlight/*/brightness 2>/dev/null
 sudo chmod +x /usr/local/bin/touch_right_click.py
 sudo chmod +x /usr/local/bin/quick-panel.py
 ```
-
+<br>
 Run Touch Movements  
 ```
 python3 /usr/local/bin/touch_right_click.py
 ```
-
+<br>
 Run Keyboard  
 ```
 killall -9 matchbox-keyboard 2>/dev/null  
 matchbox-keyboard &  
 ```
-
+<br>
 Run light-locker  
 ```
 light-locker &
 ```
-
+<br>
 Run Brightness Panel  
 ```
 python3 /usr/local/bin/quick-panel.py &
@@ -91,17 +91,21 @@ sudo cp ~/Desktop/quick-panel.desktop /usr/share/applications/
 ```
 
 auto start  
-mkdir -p ~/.config/autostart   
+```
+mkdir -p ~/.config/autostart
+```
 
-
-# Aktif oturum için hemen devreye al:  
+```
 xkbset accessx sticky -twokey -latchto  
+```
 
 # Her masaüstü açılışında kalıcı olması için:  
+```
 grep -qxF "xkbset accessx sticky -twokey -latchto" ~/.xsessionrc 2>/dev/null || echo "xkbset accessx sticky -twokey -latchto" >> ~/.xsessionrc
 grep -qxF "xset r rate 250 35" ~/.xsessionrc 2>/dev/null || echo "xset r rate 250 35" >> ~/.xsessionrc
 
 grep -qxF "python3 /usr/local/bin/quick-panel.py &" ~/.xsessionrc 2>/dev/null || echo "python3 /usr/local/bin/quick-panel.py &" >> ~/.xsessionrc
+```
 
 Control  
 >xkbset accessx sticky -twokey -latchto  
