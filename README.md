@@ -30,10 +30,10 @@ Directory Structures
 ├── /etc/modprobe.d/hailo-blacklist.conf  
 ├── /etc/systemd/system/hailo-delayed-load.service  
 ├  
-/usr/local/bin/quick-panel.py  
-
-/usr/local/bin/lock-sleep.sh
-
+├── /usr/local/bin/quick-panel.py  
+├  
+├── /usr/local/bin/lock-sleep.sh  
+├  
 ├── /usr/share/matchbox-keyboard/keyboard.xml  
 └── ~/.config/openbox/lxde-pi-rc.xml  
 
