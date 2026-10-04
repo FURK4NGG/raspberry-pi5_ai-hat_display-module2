@@ -133,6 +133,7 @@ openbox --reconfigure
 
 <details>
 <summary>koreader</summary>
+  
 ```
 # 1. ARM64 için güncel .deb indirme bağlantısını çek ve indir
 URL=$(curl -s https://api.github.com/repos/koreader/koreader/releases/latest | grep "browser_download_url.*arm64.*\.deb" | cut -d '"' -f 4 | head -n 1)
@@ -165,7 +166,6 @@ Terminal=false
 Categories=Office;Viewer;
 EOF
 ```
-
 </details>
 
 
@@ -219,6 +219,7 @@ chmod +x ~/Desktop/steam.desktop
 
 steam &
 ```
+</details>
 
 # Fast Installation  
 
