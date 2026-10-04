@@ -201,7 +201,7 @@ cat << 'EOF' > ~/Desktop/rpicamgui.desktop
 Type=Application
 Name=RPi Cam GUI
 Comment=Touchscreen Camera Controller
-Exec=python3 /home/bob/RPiCamGUI/RPiCamGUI.py
+Exec=/bin/sh -c "python3 $HOME/RPiCamGUI/RPiCamGUI.py"
 Icon=camera-photo
 Terminal=false
 Categories=AudioVideo;Video;
@@ -213,7 +213,7 @@ sudo cp ~/Desktop/rpicamgui.desktop /usr/share/applications/
 
 Run  
 ```
-python3 /home/bob/RPiCamGUI/RPiCamGUI.py
+python3 ~/RPiCamGUI/RPiCamGUI.py
 ```
 </details>
 
