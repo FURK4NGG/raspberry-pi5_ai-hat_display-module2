@@ -169,6 +169,50 @@ EOF
 </details>
 
 
+</details>
+
+
+### 📷 RPiCamGUI
+
+Lightweight touch-friendly graphical user interface designed for Raspberry Pi camera modules (such as Camera Module 3 / IMX708). Provides real-time preview, digital zoom controls, and fast parameter tuning directly on the display.
+
+<details>
+<summary>Installation & Setup</summary>
+
+#### 1. System Dependencies & Environment Setup
+Raspberry Pi OS (Bookworm) uses PEP 668 (`externally-managed-environment`), so all GUI and runtime dependencies must be installed via APT:
+
+```bash
+# Update repositories and install native GUI/camera packages
+sudo apt update
+sudo apt install -y git python3-pygame python3-pip python3-pyqt5 python3-opencv libcamera-tools
+
+cd ~
+git clone [https://github.com/Gordon999/RPiCamGUI.git](https://github.com/Gordon999/RPiCamGUI.git)
+cd RPiCamGUI
+chmod +x RPiCamGUI.py
+sudo usermod -aG gpio,video,render $USER
+
+
+cat << 'EOF' > ~/Desktop/rpicamgui.desktop
+[Desktop Entry]
+Type=Application
+Name=RPi Cam GUI
+Comment=Touchscreen Camera Controller
+Exec=python3 /home/bob/RPiCamGUI/RPiCamGUI.py
+Icon=camera-photo
+Terminal=false
+Categories=AudioVideo;Video;
+EOF
+
+chmod +x ~/Desktop/rpicamgui.desktop
+sudo cp ~/Desktop/rpicamgui.desktop /usr/share/applications/
+
+python3 /home/bob/RPiCamGUI/RPiCamGUI.py
+```
+</details>
+
+
 ### 🎮 Steam Client (via Box64 / Box86)
 
 Runs Valve's x86 Steam client on the ARM64 architecture of the Raspberry Pi 5 using dynamic binary translation layers.
