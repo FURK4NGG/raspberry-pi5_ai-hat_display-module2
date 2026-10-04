@@ -131,30 +131,30 @@ openbox --reconfigure
 ```
 
 
+### 📖 KOReader
+
+A versatile, gesture-driven document and e-book reader optimized for touchscreens and e-ink displays. It offers seamless rendering for EPUB, PDF, DJVU, CBZ, and FB2 formats, featuring advanced text reflow for PDFs, full typographic customization, and a lightweight footprint ideal for low-power ARM devices.
 <details>
-<summary>koreader</summary>
-  
-```
-# 1. ARM64 için güncel .deb indirme bağlantısını çek ve indir
-URL=$(curl -s https://api.github.com/repos/koreader/koreader/releases/latest | grep "browser_download_url.*arm64.*\.deb" | cut -d '"' -f 4 | head -n 1)
+<summary>KOReader</summary>
+
+#### Installation & Setup
+
+```bash
+# 1. Fetch the latest ARM64 .deb release URL and download it
+URL=$(curl -s [https://api.github.com/repos/koreader/koreader/releases/latest](https://api.github.com/repos/koreader/koreader/releases/latest) | grep "browser_download_url.*arm64.*\.deb" | cut -d '"' -f 4 | head -n 1)
 wget -O koreader.deb "$URL"
 
-# 2. Paketi kur
+# 2. Install the package
 sudo dpkg -i koreader.deb
 
-# 3. Bağımlılıkları tamamla
+# 3. Resolve and install missing dependencies
 sudo apt install -f -y
 
-# 4. Kurulum dosyasını sil
+# 4. Clean up the downloaded installer
 rm -f koreader.deb
-```
 
-Run  
-```
-koreader &
-```
 
-```
+
 cat << 'EOF' > ~/Desktop/koreader.desktop
 [Desktop Entry]
 Type=Application
@@ -166,9 +166,11 @@ Terminal=false
 Categories=Office;Viewer;
 EOF
 ```
-</details>
 
-
+Run  
+```
+koreader &
+```
 </details>
 
 
@@ -207,7 +209,10 @@ EOF
 
 chmod +x ~/Desktop/rpicamgui.desktop
 sudo cp ~/Desktop/rpicamgui.desktop /usr/share/applications/
+```
 
+Run  
+```
 python3 /home/bob/RPiCamGUI/RPiCamGUI.py
 ```
 </details>
@@ -260,7 +265,10 @@ Categories=Game;
 EOF
 
 chmod +x ~/Desktop/steam.desktop
+```
 
+Run  
+```
 steam &
 ```
 </details>
