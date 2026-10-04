@@ -131,7 +131,8 @@ openbox --reconfigure
 ```
 
 
-koreader  
+<details>
+<summary>koreader</summary>
 ```
 # 1. ARM64 için güncel .deb indirme bağlantısını çek ve indir
 URL=$(curl -s https://api.github.com/repos/koreader/koreader/releases/latest | grep "browser_download_url.*arm64.*\.deb" | cut -d '"' -f 4 | head -n 1)
@@ -165,6 +166,59 @@ Categories=Office;Viewer;
 EOF
 ```
 
+</details>
+
+
+### 🎮 Steam Client (via Box64 / Box86)
+
+Runs Valve's x86 Steam client on the ARM64 architecture of the Raspberry Pi 5 using dynamic binary translation layers.
+
+<details>
+<summary>Installation & Setup</summary>
+
+#### 1. Switch Kernel to 4K Page Size (Mandatory)
+The Raspberry Pi 5 kernel defaults to a 16 KB page size (`kernel_2712.img`), causing 32-bit x86/ARM shared libraries (`libm.so.6`) to crash with `ELF load command address/offset not page-aligned`. You must force the standard 4K-paged 64-bit kernel:
+
+```bash
+# Enforce standard 4KB page kernel
+echo "kernel=kernel8.img" | sudo tee -a /boot/firmware/config.txt
+sudo reboot
+
+getconf PAGESIZE
+
+# Enable 32-bit ARM architecture
+sudo dpkg --add-architecture armhf
+
+# Add Box64 and Box86 APT sources and GPG keys
+sudo wget [https://ryanfortner.github.io/box64-debs/box64.list](https://ryanfortner.github.io/box64-debs/box64.list) -O /etc/apt/sources.list.d/box64.list
+sudo wget [https://ryanfortner.github.io/box86-debs/box86.list](https://ryanfortner.github.io/box86-debs/box86.list) -O /etc/apt/sources.list.d/box86.list
+wget -qO- [https://ryanfortner.github.io/box64-debs/KEY.gpg](https://ryanfortner.github.io/box64-debs/KEY.gpg) | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/box64-debs-archive-keyring.gpg > /dev/null
+
+# Update and install translation layers with graphics runtimes
+sudo apt update
+sudo apt install -y box64-rpi5arm64 box86-generic-arm:armhf libgl1-mesa-dri:armhf libgl1-mesa-glx:armhf
+
+
+cd ~
+wget [https://raw.githubusercontent.com/ptitSeb/box86/master/install_steam.sh](https://raw.githubusercontent.com/ptitSeb/box86/master/install_steam.sh)
+chmod +x install_steam.sh
+./install_steam.sh
+
+cat << 'EOF' > ~/Desktop/steam.desktop
+[Desktop Entry]
+Type=Application
+Name=Steam
+Comment=Application for managing and playing games on Steam
+Exec=/usr/local/bin/steam %U
+Icon=steam
+Terminal=false
+Categories=Game;
+EOF
+
+chmod +x ~/Desktop/steam.desktop
+
+steam &
+```
 
 # Fast Installation  
 
