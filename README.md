@@ -137,6 +137,8 @@ A versatile, gesture-driven document and e-book reader optimized for touchscreen
 <details>
 <summary>KOReader</summary>
 
+![raspberry-pi5_ai-hat_display-module2 Demo Image](https://github.com/FURK4NGG/raspberry-pi5_ai-hat_display-module2/blob/main/%7B%7D/raspberry-pi5_ai-hat_display-module2_11.webp)
+
 #### Installation & Setup
 
 ```bash
@@ -181,6 +183,8 @@ Lightweight touch-friendly graphical user interface designed for Raspberry Pi ca
 <details>
 <summary>Installation & Setup</summary>
 
+![raspberry-pi5_ai-hat_display-module2 Demo Image](https://github.com/FURK4NGG/raspberry-pi5_ai-hat_display-module2/blob/main/%7B%7D/raspberry-pi5_ai-hat_display-module2_12.webp)
+
 #### 1. System Dependencies & Environment Setup
 Raspberry Pi OS (Bookworm) uses PEP 668 (`externally-managed-environment`), so all GUI and runtime dependencies must be installed via APT:
 
@@ -224,6 +228,10 @@ Runs Valve's x86 Steam client on the ARM64 architecture of the Raspberry Pi 5 us
 
 <details>
 <summary>Installation & Setup</summary>
+
+![raspberry-pi5_ai-hat_display-module2 Demo Image](https://github.com/FURK4NGG/raspberry-pi5_ai-hat_display-module2/blob/main/%7B%7D/raspberry-pi5_ai-hat_display-module2_13.webp)
+
+![raspberry-pi5_ai-hat_display-module2 Demo Image](https://github.com/FURK4NGG/raspberry-pi5_ai-hat_display-module2/blob/main/%7B%7D/raspberry-pi5_ai-hat_display-module2_14.webp)
 
 #### 1. Switch Kernel to 4K Page Size (Mandatory)
 The Raspberry Pi 5 kernel defaults to a 16 KB page size (`kernel_2712.img`), causing 32-bit x86/ARM shared libraries (`libm.so.6`) to crash with `ELF load command address/offset not page-aligned`. You must force the standard 4K-paged 64-bit kernel:
