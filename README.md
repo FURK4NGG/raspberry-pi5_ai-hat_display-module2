@@ -119,6 +119,7 @@ Run Brightness Panel
 ```
 python3 /usr/local/bin/quick-panel.py &
 ```
+<br><br>
 
 Touch Movements Control  
 ```
