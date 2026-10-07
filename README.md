@@ -289,3 +289,6 @@ cd raspberry-pi5_ai-hat_display-module2
 chmod +x install.sh  
 ./install.sh  
 ```
+
+## 🔒 License  
+<h1 align="center">📜 GPL-3.0 License</h1>
