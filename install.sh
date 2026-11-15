@@ -50,7 +50,7 @@ raspi_nonint() {
 # 0. Screen selection and options
 # ---------------------------------------------------------
 echo "========================================================="
-echo " Raspberry Pi 5 AI-HAT Setup"
+echo " Raspberry Pi 5 AI-HAT & Workstation Setup"
 echo "========================================================="
 echo
 echo "Which screen will you use?"
@@ -70,11 +70,13 @@ done
 
 INSTALL_HAILO=0
 POWER_5A=0
+
+if ask_yes_no "Is an AI HAT (Hailo) connected to the PCIe port?" "y"; then
+    INSTALL_HAILO=1
+fi
+
 if [ "$SCREEN" = "phone" ]; then
     echo ">> Selected: Phone (RealVNC)"
-    if ask_yes_no "Is an AI HAT (Hailo) connected to the PCIe port?" "y"; then
-        INSTALL_HAILO=1
-    fi
     if ask_yes_no "Does your power bank truly deliver 5V/5A (enables usb_max_current_enable)?" "n"; then
         POWER_5A=1
     fi
@@ -93,7 +95,7 @@ if ask_yes_no "Install gaming performance tweaks (CPU governor, GameMode, Box64,
 fi
 
 echo
-echo "=== Starting Full Setup (screen: $SCREEN) ==="
+echo "=== Starting Full Setup (screen: $SCREEN | Hailo: $INSTALL_HAILO) ==="
 
 # ---------------------------------------------------------
 # 1. 4K Page Size Kernel (required for Box86/Steam)
@@ -107,12 +109,16 @@ if [ -f "$CONFIG_TXT" ]; then
 fi
 
 # ---------------------------------------------------------
-# 2. System packages and dependencies
+# 2. System packages, Camera, and dependencies
 # ---------------------------------------------------------
-echo "[2/8] Installing required system packages..."
+echo "[2/8] Installing required system & camera packages..."
 sudo apt update
 
-COMMON_PKGS="git curl wget xdotool xkbset python3-pygame python3-pip python3-pyqt5 python3-opencv python3-numpy libcamera-tools"
+COMMON_PKGS="git curl wget xdotool xkbset ffmpeg \
+    rpicam-apps libcamera-apps libcamera-tools \
+    python3-picamera2 python3-libcamera python3-kms++ \
+    python3-simplejpeg python3-gpiozero \
+    python3-pygame python3-pip python3-pyqt5 python3-opencv python3-numpy"
 
 if [ "$SCREEN" = "display" ]; then
     sudo apt install -y $COMMON_PKGS \
@@ -127,10 +133,14 @@ else
     sudo usermod -aG gpio,video,render "$USER"
 fi
 
+# Configure Camera (IMX708) permissions and kernel module
+sudo modprobe imx708 2>/dev/null || true
+sudo chmod 666 /dev/video* /dev/media* 2>/dev/null || true
+
 # ---------------------------------------------------------
-# 3. Screen-specific configuration
+# 3. Screen-specific & AI HAT (Hailo) configuration
 # ---------------------------------------------------------
-echo "[3/8] Applying $SCREEN configuration..."
+echo "[3/8] Applying $SCREEN and hardware configuration..."
 mkdir -p "$HOME/.config/autostart"
 
 if [ "$SCREEN" = "display" ]; then
@@ -176,33 +186,29 @@ else
     add_user_line "xkbset accessx sticky -twokey -latchto" "$XSESSIONRC"
     add_user_line "xkbset exp =sticky" "$XSESSIONRC"
     add_user_line "xset r rate 250 35" "$XSESSIONRC"
+fi
 
-    # --- AI HAT (Hailo) PCIe ---
-    if [ "$INSTALL_HAILO" -eq 1 ]; then
-        echo "[*] Configuring AI HAT (Hailo) PCIe..."
-        sudo apt install -y hailo-all || echo "[!] hailo-all installation failed"
-        add_line "dtparam=pciex1" "$CONFIG_TXT"
-        add_line "dtparam=pciex1_gen=3" "$CONFIG_TXT"
+# --- AI HAT (Hailo) PCIe & 5s Delayed Cron Load (prevents DSI display conflict) ---
+if [ "$INSTALL_HAILO" -eq 1 ]; then
+    echo "[*] Configuring AI HAT (Hailo) PCIe with 5s delayed boot load..."
+    sudo apt install -y hailo-all || echo "[!] hailo-all installation failed"
+    add_line "dtparam=pciex1" "$CONFIG_TXT"
+    add_line "dtparam=pciex1_gen=3" "$CONFIG_TXT"
 
-        echo "blacklist hailo_pci" | sudo tee /etc/modprobe.d/hailo-blacklist.conf > /dev/null
+    # Disable early loading at boot to prevent display conflicts
+    sudo rm -f /etc/modules-load.d/hailo.conf
+    echo "blacklist hailo_pci" | sudo tee /etc/modprobe.d/hailo-blacklist.conf > /dev/null
+    sudo depmod -a
 
-        sudo tee /etc/systemd/system/hailo-delayed-load.service > /dev/null << 'SERVICE_EOF'
-[Unit]
-Description=Delayed Hailo PCIe module load
-After=multi-user.target
+    # Clean up any legacy systemd delayed-load service remnants
+    sudo systemctl disable --now hailo-delayed-load.service 2>/dev/null || true
+    sudo rm -f /etc/systemd/system/hailo-delayed-load.service \
+               /etc/systemd/system/graphical.target.wants/hailo-delayed-load.service \
+               /etc/systemd/system/multi-user.target.wants/hailo-delayed-load.service
+    sudo systemctl daemon-reload
 
-[Service]
-Type=oneshot
-ExecStartPre=/bin/sleep 15
-ExecStart=/sbin/modprobe hailo_pci
-
-[Install]
-WantedBy=multi-user.target
-SERVICE_EOF
-
-        sudo systemctl daemon-reload
-        sudo systemctl enable hailo-delayed-load.service
-    fi
+    # Add cron job to load the AI HAT driver 5 seconds after boot
+    (sudo crontab -l 2>/dev/null | grep -v "hailo_pci"; echo "@reboot sleep 5 && /sbin/modprobe hailo_pci") | sudo crontab -
 fi
 
 # ---------------------------------------------------------
@@ -238,7 +244,6 @@ wget -qO- https://ryanfortner.github.io/box86-debs/KEY.gpg | gpg --dearmor | sud
 
 sudo apt update
 sudo apt install -y box64-rpi5arm64 box86-generic-arm:armhf libgl1-mesa-dri:armhf
-# libgl1-mesa-glx was removed in Bookworm, libglx-mesa0 replaces it
 sudo apt install -y libgl1-mesa-glx:armhf 2>/dev/null || sudo apt install -y libglx-mesa0:armhf || echo "[!] Could not install armhf GLX library"
 
 if [ ! -f "/usr/local/bin/steam" ]; then
@@ -277,17 +282,11 @@ GOV_EOF
     sudo apt install -y gamemode mangohud || echo "[!] gamemode/mangohud installation failed"
     sudo usermod -aG gamemode "$USER" 2>/dev/null || true
 
-    # --- 7.3 Box64 performance profile (example only, per-game use recommended) ---
+    # --- 7.3 Box64 performance profile ---
     echo "[*] Creating Box64 example profile..."
     if [ ! -f /etc/box64.box64rc ]; then
         sudo tee /etc/box64.box64rc > /dev/null << 'BOX_EOF'
 # Box64 per-game profiles.
-# Aggressive options speed things up but can break some games,
-# so enable them per game and test. Option names can change between
-# Box64 versions, check the official documentation if something fails.
-#
-# Example (uncomment and replace the section name with the game's executable):
-#
 # [hl2_linux]
 # BOX64_DYNAREC_BIGBLOCK=2
 # BOX64_DYNAREC_FASTNAN=1
@@ -422,7 +421,13 @@ if [ "$SCREEN" = "phone" ]; then
     echo "  2. Connect the phone to a USB-A port and enable USB Tethering"
     echo "  3. Find the Pi IP:  hostname -I"
     echo "  4. Open RealVNC Viewer on the phone and connect (IP or Cloud)"
-    echo "     (For Cloud: sign in to RealVNC from the VNC icon on the Pi)"
+fi
+if [ "$INSTALL_HAILO" -eq 1 ]; then
+    echo
+    echo "AI HAT (Hailo) verification (wait 5s after reboot):"
+    echo "  - Check device:    ls -l /dev/hailo0"
+    echo "  - Check firmware:  hailortcli fw-control identify"
+    echo "  - Check camera:    rpicam-hello --list-cameras"
 fi
 if [ "$INSTALL_GAMING" -eq 1 ]; then
     echo
