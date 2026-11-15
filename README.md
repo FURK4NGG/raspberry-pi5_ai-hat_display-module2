@@ -134,154 +134,6 @@ Apply Openbox Rules
 openbox --reconfigure
 ```
 
-
-### 📖 KOReader
-
-A versatile, gesture-driven document and e-book reader optimized for touchscreens and e-ink displays. It offers seamless rendering for EPUB, PDF, DJVU, CBZ, and FB2 formats, featuring advanced text reflow for PDFs, full typographic customization, and a lightweight footprint ideal for low-power ARM devices.
-
-![raspberry-pi5_ai-hat_display-module2 Demo Image](https://github.com/FURK4NGG/raspberry-pi5_ai-hat_display-module2/blob/main/%7B%7D/raspberry-pi5_ai-hat_display-module2_11.webp)
-<details>
-<summary>KOReader</summary>
-
-#### Installation & Setup
-
-```bash
-# 1. Fetch the latest ARM64 .deb release URL and download it
-URL=$(curl -s [https://api.github.com/repos/koreader/koreader/releases/latest](https://api.github.com/repos/koreader/koreader/releases/latest) | grep "browser_download_url.*arm64.*\.deb" | cut -d '"' -f 4 | head -n 1)
-wget -O koreader.deb "$URL"
-
-# 2. Install the package
-sudo dpkg -i koreader.deb
-
-# 3. Resolve and install missing dependencies
-sudo apt install -f -y
-
-# 4. Clean up the downloaded installer
-rm -f koreader.deb
-
-
-
-cat << 'EOF' > ~/Desktop/koreader.desktop
-[Desktop Entry]
-Type=Application
-Name=KOReader
-Comment=E-Book Reader
-Exec=koreader -w 800x600
-Icon=accessories-dictionary
-Terminal=false
-Categories=Office;Viewer;
-EOF
-```
-
-Run  
-```
-koreader &
-```
-</details>
-
-
-### 📷 RPiCamGUI
-
-Lightweight touch-friendly graphical user interface designed for Raspberry Pi camera modules (such as Camera Module 3 / IMX708). Provides real-time preview, digital zoom controls, and fast parameter tuning directly on the display.
-
-![raspberry-pi5_ai-hat_display-module2 Demo Image](https://github.com/FURK4NGG/raspberry-pi5_ai-hat_display-module2/blob/main/%7B%7D/raspberry-pi5_ai-hat_display-module2_12.webp)
-<details>
-<summary>Installation & Setup</summary>
-
-#### 1. System Dependencies & Environment Setup
-Raspberry Pi OS (Bookworm) uses PEP 668 (`externally-managed-environment`), so all GUI and runtime dependencies must be installed via APT:
-
-```bash
-# Update repositories and install native GUI/camera packages
-sudo apt update
-sudo apt install -y git python3-pygame python3-pip python3-pyqt5 python3-opencv libcamera-tools
-
-cd ~
-git clone [https://github.com/Gordon999/RPiCamGUI.git](https://github.com/Gordon999/RPiCamGUI.git)
-cd RPiCamGUI
-chmod +x RPiCamGUI.py
-sudo usermod -aG gpio,video,render $USER
-
-
-cat << 'EOF' > ~/Desktop/rpicamgui.desktop
-[Desktop Entry]
-Type=Application
-Name=RPi Cam GUI
-Comment=Touchscreen Camera Controller
-Exec=/bin/sh -c "python3 $HOME/RPiCamGUI/RPiCamGUI.py"
-Icon=camera-photo
-Terminal=false
-Categories=AudioVideo;Video;
-EOF
-
-chmod +x ~/Desktop/rpicamgui.desktop
-sudo cp ~/Desktop/rpicamgui.desktop /usr/share/applications/
-```
-
-Run  
-```
-python3 ~/RPiCamGUI/RPiCamGUI.py
-```
-</details>
-
-
-### 🎮 Steam Client (via Box64 / Box86)
-
-Runs Valve's x86 Steam client on the ARM64 architecture of the Raspberry Pi 5 using dynamic binary translation layers.
-
-![raspberry-pi5_ai-hat_display-module2 Demo Image](https://github.com/FURK4NGG/raspberry-pi5_ai-hat_display-module2/blob/main/%7B%7D/raspberry-pi5_ai-hat_display-module2_13.webp)
-
-![raspberry-pi5_ai-hat_display-module2 Demo Image](https://github.com/FURK4NGG/raspberry-pi5_ai-hat_display-module2/blob/main/%7B%7D/raspberry-pi5_ai-hat_display-module2_14.webp)
-<details>
-<summary>Installation & Setup</summary>
-
-#### 1. Switch Kernel to 4K Page Size (Mandatory)
-The Raspberry Pi 5 kernel defaults to a 16 KB page size (`kernel_2712.img`), causing 32-bit x86/ARM shared libraries (`libm.so.6`) to crash with `ELF load command address/offset not page-aligned`. You must force the standard 4K-paged 64-bit kernel:
-
-```bash
-# Enforce standard 4KB page kernel
-echo "kernel=kernel8.img" | sudo tee -a /boot/firmware/config.txt
-sudo reboot
-
-getconf PAGESIZE
-
-# Enable 32-bit ARM architecture
-sudo dpkg --add-architecture armhf
-
-# Add Box64 and Box86 APT sources and GPG keys
-sudo wget [https://ryanfortner.github.io/box64-debs/box64.list](https://ryanfortner.github.io/box64-debs/box64.list) -O /etc/apt/sources.list.d/box64.list
-sudo wget [https://ryanfortner.github.io/box86-debs/box86.list](https://ryanfortner.github.io/box86-debs/box86.list) -O /etc/apt/sources.list.d/box86.list
-wget -qO- [https://ryanfortner.github.io/box64-debs/KEY.gpg](https://ryanfortner.github.io/box64-debs/KEY.gpg) | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/box64-debs-archive-keyring.gpg > /dev/null
-
-# Update and install translation layers with graphics runtimes
-sudo apt update
-sudo apt install -y box64-rpi5arm64 box86-generic-arm:armhf libgl1-mesa-dri:armhf libgl1-mesa-glx:armhf
-
-
-cd ~
-wget [https://raw.githubusercontent.com/ptitSeb/box86/master/install_steam.sh](https://raw.githubusercontent.com/ptitSeb/box86/master/install_steam.sh)
-chmod +x install_steam.sh
-./install_steam.sh
-
-cat << 'EOF' > ~/Desktop/steam.desktop
-[Desktop Entry]
-Type=Application
-Name=Steam
-Comment=Application for managing and playing games on Steam
-Exec=/usr/local/bin/steam %U
-Icon=steam
-Terminal=false
-Categories=Game;
-EOF
-
-chmod +x ~/Desktop/steam.desktop
-```
-
-Run  
-```
-steam &
-```
-</details>
 <br><br>
 </details>
 
@@ -638,155 +490,6 @@ sudo nmcli con modify "Wired connection 1" connection.autoconnect yes
 ```bash
 sudo reboot
 ```
-
----
-
-## 🧩 Optional Apps
-
-### 📖 KOReader
-
-A lightweight, touch-friendly e-book reader supporting EPUB, PDF, DJVU, CBZ and FB2.
-
-<details>
-<summary>Installation</summary>
-
-```bash
-# Download the latest ARM64 .deb release
-URL=$(curl -s https://api.github.com/repos/koreader/koreader/releases/latest | grep "browser_download_url.*arm64.*\.deb" | cut -d '"' -f 4 | head -n 1)
-wget -O koreader.deb "$URL"
-
-# Install and resolve missing dependencies
-sudo dpkg -i koreader.deb
-sudo apt install -f -y
-rm -f koreader.deb
-
-# Desktop shortcut
-cat << 'EOF' > ~/Desktop/koreader.desktop
-[Desktop Entry]
-Type=Application
-Name=KOReader
-Comment=E-Book Reader
-Exec=koreader -w 800x600
-Icon=accessories-dictionary
-Terminal=false
-Categories=Office;Viewer;
-EOF
-
-chmod +x ~/Desktop/koreader.desktop
-```
-
-Run:
-
-```bash
-koreader &
-```
-
-</details>
-
-### 📷 RPiCamGUI
-
-A touch-friendly interface for Raspberry Pi camera modules (e.g. Camera Module 3).
-
-<details>
-<summary>Installation</summary>
-
-```bash
-sudo apt update
-sudo apt install -y git python3-pygame python3-pip python3-pyqt5 python3-opencv libcamera-tools
-
-cd ~
-git clone https://github.com/Gordon999/RPiCamGUI.git
-cd RPiCamGUI
-chmod +x RPiCamGUI.py
-sudo usermod -aG gpio,video,render $USER
-
-cat << 'EOF' > ~/Desktop/rpicamgui.desktop
-[Desktop Entry]
-Type=Application
-Name=RPi Cam GUI
-Comment=Camera Controller
-Exec=/bin/sh -c "python3 $HOME/RPiCamGUI/RPiCamGUI.py"
-Icon=camera-photo
-Terminal=false
-Categories=AudioVideo;Video;
-EOF
-
-chmod +x ~/Desktop/rpicamgui.desktop
-sudo cp ~/Desktop/rpicamgui.desktop /usr/share/applications/
-```
-
-Run:
-
-```bash
-python3 ~/RPiCamGUI/RPiCamGUI.py
-```
-
-> ℹ️ The camera preview over VNC may be slow or may not appear.
-
-</details>
-
-### 🎮 Steam Client (Box64 / Box86)
-
-Runs Valve's x86 Steam client on the Pi 5's ARM64 architecture using dynamic binary translation layers.
-
-<details>
-<summary>Installation</summary>
-
-#### 1. Switch to the 4K page size kernel (mandatory)
-
-The Pi 5 uses a 16 KB page size kernel by default, which causes `ELF load command address/offset not page-aligned` errors in 32-bit libraries:
-
-```bash
-echo "kernel=kernel8.img" | sudo tee -a /boot/firmware/config.txt
-sudo reboot
-
-getconf PAGESIZE
-```
-
-The output should be `4096`.
-
-#### 2. Install Box64 / Box86
-
-```bash
-sudo dpkg --add-architecture armhf
-
-sudo wget https://ryanfortner.github.io/box64-debs/box64.list -O /etc/apt/sources.list.d/box64.list
-sudo wget https://ryanfortner.github.io/box86-debs/box86.list -O /etc/apt/sources.list.d/box86.list
-wget -qO- https://ryanfortner.github.io/box64-debs/KEY.gpg | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/box64-debs-archive-keyring.gpg > /dev/null
-
-sudo apt update
-sudo apt install -y box64-rpi5arm64 box86-generic-arm:armhf libgl1-mesa-dri:armhf libgl1-mesa-glx:armhf
-```
-
-#### 3. Install Steam
-
-```bash
-cd ~
-wget https://raw.githubusercontent.com/ptitSeb/box86/master/install_steam.sh
-chmod +x install_steam.sh
-./install_steam.sh
-
-cat << 'EOF' > ~/Desktop/steam.desktop
-[Desktop Entry]
-Type=Application
-Name=Steam
-Comment=Application for managing and playing games on Steam
-Exec=/usr/local/bin/steam %U
-Icon=steam
-Terminal=false
-Categories=Game;
-EOF
-
-chmod +x ~/Desktop/steam.desktop
-```
-
-Run:
-
-```bash
-steam &
-```
-
-</details>
 
 ---
 
@@ -1170,155 +873,6 @@ sudo reboot
 
 ---
 
-## 🧩 İsteğe Bağlı Uygulamalar
-
-### 📖 KOReader
-
-EPUB, PDF, DJVU, CBZ ve FB2 destekleyen, dokunmatik dostu hafif bir e-kitap okuyucu.
-
-<details>
-<summary>Kurulum</summary>
-
-```bash
-# En son ARM64 .deb sürümünü indir
-URL=$(curl -s https://api.github.com/repos/koreader/koreader/releases/latest | grep "browser_download_url.*arm64.*\.deb" | cut -d '"' -f 4 | head -n 1)
-wget -O koreader.deb "$URL"
-
-# Kur ve eksik bağımlılıkları çöz
-sudo dpkg -i koreader.deb
-sudo apt install -f -y
-rm -f koreader.deb
-
-# Masaüstü kısayolu
-cat << 'EOF' > ~/Desktop/koreader.desktop
-[Desktop Entry]
-Type=Application
-Name=KOReader
-Comment=E-Book Reader
-Exec=koreader -w 800x600
-Icon=accessories-dictionary
-Terminal=false
-Categories=Office;Viewer;
-EOF
-
-chmod +x ~/Desktop/koreader.desktop
-```
-
-Çalıştır:
-
-```bash
-koreader &
-```
-
-</details>
-
-### 📷 RPiCamGUI
-
-Raspberry Pi kamera modülleri için (ör. Camera Module 3) dokunmatik dostu arayüz.
-
-<details>
-<summary>Kurulum</summary>
-
-```bash
-sudo apt update
-sudo apt install -y git python3-pygame python3-pip python3-pyqt5 python3-opencv libcamera-tools
-
-cd ~
-git clone https://github.com/Gordon999/RPiCamGUI.git
-cd RPiCamGUI
-chmod +x RPiCamGUI.py
-sudo usermod -aG gpio,video,render $USER
-
-cat << 'EOF' > ~/Desktop/rpicamgui.desktop
-[Desktop Entry]
-Type=Application
-Name=RPi Cam GUI
-Comment=Camera Controller
-Exec=/bin/sh -c "python3 $HOME/RPiCamGUI/RPiCamGUI.py"
-Icon=camera-photo
-Terminal=false
-Categories=AudioVideo;Video;
-EOF
-
-chmod +x ~/Desktop/rpicamgui.desktop
-sudo cp ~/Desktop/rpicamgui.desktop /usr/share/applications/
-```
-
-Çalıştır:
-
-```bash
-python3 ~/RPiCamGUI/RPiCamGUI.py
-```
-
-> ℹ️ VNC üzerinden kamera önizlemesi yavaş olabilir veya görünmeyebilir.
-
-</details>
-
-### 🎮 Steam Client (Box64 / Box86)
-
-Valve'in x86 Steam istemcisini Pi 5'in ARM64 mimarisinde dinamik çeviri katmanlarıyla çalıştırır.
-
-<details>
-<summary>Kurulum</summary>
-
-#### 1. 4K sayfa boyutlu çekirdeğe geç (zorunlu)
-
-Pi 5 varsayılan olarak 16 KB sayfa boyutlu çekirdek kullanır ve bu, 32-bit kütüphanelerde `ELF load command address/offset not page-aligned` hatasına yol açar:
-
-```bash
-echo "kernel=kernel8.img" | sudo tee -a /boot/firmware/config.txt
-sudo reboot
-
-getconf PAGESIZE
-```
-
-Çıktı `4096` olmalıdır.
-
-#### 2. Box64 / Box86 kurulumu
-
-```bash
-sudo dpkg --add-architecture armhf
-
-sudo wget https://ryanfortner.github.io/box64-debs/box64.list -O /etc/apt/sources.list.d/box64.list
-sudo wget https://ryanfortner.github.io/box86-debs/box86.list -O /etc/apt/sources.list.d/box86.list
-wget -qO- https://ryanfortner.github.io/box64-debs/KEY.gpg | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/box64-debs-archive-keyring.gpg > /dev/null
-
-sudo apt update
-sudo apt install -y box64-rpi5arm64 box86-generic-arm:armhf libgl1-mesa-dri:armhf libgl1-mesa-glx:armhf
-```
-
-#### 3. Steam kurulumu
-
-```bash
-cd ~
-wget https://raw.githubusercontent.com/ptitSeb/box86/master/install_steam.sh
-chmod +x install_steam.sh
-./install_steam.sh
-
-cat << 'EOF' > ~/Desktop/steam.desktop
-[Desktop Entry]
-Type=Application
-Name=Steam
-Comment=Application for managing and playing games on Steam
-Exec=/usr/local/bin/steam %U
-Icon=steam
-Terminal=false
-Categories=Game;
-EOF
-
-chmod +x ~/Desktop/steam.desktop
-```
-
-Çalıştır:
-
-```bash
-steam &
-```
-
-</details>
-
----
-
 ## ⚡ Hızlı Kurulum
 
 Projeyi Pi'ye indirip kurulum scriptini çalıştırın (`KULLANICI/REPO` kısmını kendi deponuzla değiştirin):
@@ -1360,6 +914,391 @@ chmod +x install.sh
 ```
 </details>
 </details>
+
+### 📖 KOReader
+
+A versatile, gesture-driven document and e-book reader optimized for touchscreens and e-ink displays. It offers seamless rendering for EPUB, PDF, DJVU, CBZ, and FB2 formats, featuring advanced text reflow for PDFs, full typographic customization, and a lightweight footprint ideal for low-power ARM devices.
+
+![raspberry-pi5_ai-hat_display-module2 Demo Image](https://github.com/FURK4NGG/raspberry-pi5_ai-hat_display-module2/blob/main/%7B%7D/raspberry-pi5_ai-hat_display-module2_11.webp)
+<details>
+<summary>KOReader</summary>
+
+#### Installation & Setup
+
+```bash
+# 1. Fetch the latest ARM64 .deb release URL and download it
+URL=$(curl -s [https://api.github.com/repos/koreader/koreader/releases/latest](https://api.github.com/repos/koreader/koreader/releases/latest) | grep "browser_download_url.*arm64.*\.deb" | cut -d '"' -f 4 | head -n 1)
+wget -O koreader.deb "$URL"
+
+# 2. Install the package
+sudo dpkg -i koreader.deb
+
+# 3. Resolve and install missing dependencies
+sudo apt install -f -y
+
+# 4. Clean up the downloaded installer
+rm -f koreader.deb
+
+
+
+cat << 'EOF' > ~/Desktop/koreader.desktop
+[Desktop Entry]
+Type=Application
+Name=KOReader
+Comment=E-Book Reader
+Exec=koreader -w 800x600
+Icon=accessories-dictionary
+Terminal=false
+Categories=Office;Viewer;
+EOF
+```
+
+Run  
+```
+koreader &
+```
+</details>
+
+
+### 📷 RPiCamGUI
+
+Lightweight touch-friendly graphical user interface designed for Raspberry Pi camera modules (such as Camera Module 3 / IMX708). Provides real-time preview, digital zoom controls, and fast parameter tuning directly on the display.
+
+![raspberry-pi5_ai-hat_display-module2 Demo Image](https://github.com/FURK4NGG/raspberry-pi5_ai-hat_display-module2/blob/main/%7B%7D/raspberry-pi5_ai-hat_display-module2_12.webp)
+<details>
+<summary>Installation & Setup</summary>
+
+#### 1. System Dependencies & Environment Setup
+Raspberry Pi OS (Bookworm) uses PEP 668 (`externally-managed-environment`), so all GUI and runtime dependencies must be installed via APT:
+
+```bash
+# Update repositories and install native GUI/camera packages
+sudo apt update
+sudo apt install -y git python3-pygame python3-pip python3-pyqt5 python3-opencv libcamera-tools
+
+cd ~
+git clone [https://github.com/Gordon999/RPiCamGUI.git](https://github.com/Gordon999/RPiCamGUI.git)
+cd RPiCamGUI
+chmod +x RPiCamGUI.py
+sudo usermod -aG gpio,video,render $USER
+
+
+cat << 'EOF' > ~/Desktop/rpicamgui.desktop
+[Desktop Entry]
+Type=Application
+Name=RPi Cam GUI
+Comment=Touchscreen Camera Controller
+Exec=/bin/sh -c "python3 $HOME/RPiCamGUI/RPiCamGUI.py"
+Icon=camera-photo
+Terminal=false
+Categories=AudioVideo;Video;
+EOF
+
+chmod +x ~/Desktop/rpicamgui.desktop
+sudo cp ~/Desktop/rpicamgui.desktop /usr/share/applications/
+```
+
+Run  
+```
+python3 ~/RPiCamGUI/RPiCamGUI.py
+```
+</details>
+
+
+### 🎮 Steam Client (via Box64 / Box86)
+
+Runs Valve's x86 Steam client on the ARM64 architecture of the Raspberry Pi 5 using dynamic binary translation layers.
+
+![raspberry-pi5_ai-hat_display-module2 Demo Image](https://github.com/FURK4NGG/raspberry-pi5_ai-hat_display-module2/blob/main/%7B%7D/raspberry-pi5_ai-hat_display-module2_13.webp)
+
+![raspberry-pi5_ai-hat_display-module2 Demo Image](https://github.com/FURK4NGG/raspberry-pi5_ai-hat_display-module2/blob/main/%7B%7D/raspberry-pi5_ai-hat_display-module2_14.webp)
+<details>
+<summary>Installation & Setup</summary>
+
+#### 1. Switch Kernel to 4K Page Size (Mandatory)
+The Raspberry Pi 5 kernel defaults to a 16 KB page size (`kernel_2712.img`), causing 32-bit x86/ARM shared libraries (`libm.so.6`) to crash with `ELF load command address/offset not page-aligned`. You must force the standard 4K-paged 64-bit kernel:
+
+```bash
+# Enforce standard 4KB page kernel
+echo "kernel=kernel8.img" | sudo tee -a /boot/firmware/config.txt
+sudo reboot
+
+getconf PAGESIZE
+
+# Enable 32-bit ARM architecture
+sudo dpkg --add-architecture armhf
+
+# Add Box64 and Box86 APT sources and GPG keys
+sudo wget [https://ryanfortner.github.io/box64-debs/box64.list](https://ryanfortner.github.io/box64-debs/box64.list) -O /etc/apt/sources.list.d/box64.list
+sudo wget [https://ryanfortner.github.io/box86-debs/box86.list](https://ryanfortner.github.io/box86-debs/box86.list) -O /etc/apt/sources.list.d/box86.list
+wget -qO- [https://ryanfortner.github.io/box64-debs/KEY.gpg](https://ryanfortner.github.io/box64-debs/KEY.gpg) | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/box64-debs-archive-keyring.gpg > /dev/null
+
+# Update and install translation layers with graphics runtimes
+sudo apt update
+sudo apt install -y box64-rpi5arm64 box86-generic-arm:armhf libgl1-mesa-dri:armhf libgl1-mesa-glx:armhf
+
+
+cd ~
+wget [https://raw.githubusercontent.com/ptitSeb/box86/master/install_steam.sh](https://raw.githubusercontent.com/ptitSeb/box86/master/install_steam.sh)
+chmod +x install_steam.sh
+./install_steam.sh
+
+cat << 'EOF' > ~/Desktop/steam.desktop
+[Desktop Entry]
+Type=Application
+Name=Steam
+Comment=Application for managing and playing games on Steam
+Exec=/usr/local/bin/steam %U
+Icon=steam
+Terminal=false
+Categories=Game;
+EOF
+
+chmod +x ~/Desktop/steam.desktop
+```
+
+Run  
+```
+steam &
+```
+</details>
+
+## 🎮 Gaming Performance
+
+Tweaks for getting the best possible performance out of games on the Pi 5 (Box64 / Box86 / Wine). No AI acceleration is involved here, only system-level tuning.
+
+> ⚠️ Cooling and power matter more than any setting below. Use an active cooler and a real 5V/5A PD supply. Check for throttling with `vcgencmd get_throttled` (`0x0` means no problems).
+
+> ℹ️ Over the phone (VNC) option, games will have noticeable latency and low FPS. Prefer lightweight or 2D games, or use a display module / HDMI screen for real gaming.
+
+### 1. CPU Governor: performance
+
+Keeps the CPU at its maximum frequency instead of scaling down during games.
+
+```bash
+sudo tee /etc/systemd/system/cpu-performance.service > /dev/null << 'EOF'
+[Unit]
+Description=Set CPU governor to performance
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'for g in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do echo performance > $g; done'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now cpu-performance.service
+```
+
+Verify:
+
+```bash
+cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+```
+
+To revert:
+
+```bash
+sudo systemctl disable --now cpu-performance.service
+```
+
+### 2. GameMode and MangoHud
+
+`gamemode` applies CPU optimizations while a game runs. `mangohud` shows FPS, CPU/GPU load and temperature.
+
+```bash
+sudo apt install -y gamemode mangohud
+sudo usermod -aG gamemode $USER
+```
+
+Usage in Steam launch options:
+
+```
+gamemoderun mangohud %command%
+```
+
+> ℹ️ Games running through Box64/Box86 are x86 binaries. MangoHud (arm64) may not hook into them, so for those games rely on `vcgencmd measure_temp` and `htop` instead. GameMode works at the system level and is still useful.
+
+Monitor temperature and throttling in a second terminal:
+
+```bash
+watch -n 1 "vcgencmd measure_temp; vcgencmd get_throttled; vcgencmd measure_clock arm"
+```
+
+### 3. Box64 Performance Settings
+
+Box64 settings can be applied globally or per game. Aggressive options speed things up but can break some games, so **apply them per game** and test.
+
+Create or edit `/etc/box64.box64rc`:
+
+```bash
+sudo nano /etc/box64.box64rc
+```
+
+Example profile (replace the section name with the game's executable name, without `.exe` case changes):
+
+```ini
+[hl2_linux]
+BOX64_DYNAREC_BIGBLOCK=2
+BOX64_DYNAREC_FASTNAN=1
+BOX64_DYNAREC_FASTROUND=1
+BOX64_DYNAREC_CALLRET=1
+```
+
+Or test quickly with environment variables, before making them permanent:
+
+```bash
+BOX64_DYNAREC_BIGBLOCK=2 BOX64_DYNAREC_FASTNAN=1 BOX64_DYNAREC_FASTROUND=1 BOX64_DYNAREC_CALLRET=1 box64 ./game
+```
+
+Or in Steam launch options:
+
+```
+BOX64_DYNAREC_BIGBLOCK=2 BOX64_DYNAREC_FASTNAN=1 BOX64_DYNAREC_FASTROUND=1 %command%
+```
+
+| Variable | Effect |
+|---|---|
+| `BOX64_DYNAREC_BIGBLOCK` | Larger translated code blocks, faster but riskier at higher values |
+| `BOX64_DYNAREC_FASTNAN` | Faster float NaN handling, can break precision-sensitive games |
+| `BOX64_DYNAREC_FASTROUND` | Faster float rounding, can cause glitches in some games |
+| `BOX64_DYNAREC_CALLRET` | Optimizes call/return handling |
+
+> ℹ️ Option names and values change between Box64 versions. Check the official documentation for your installed version if something does not work.
+
+### 4. Mesa / V3D Driver Check
+
+The Pi 5 GPU (V3D 7.1) runs on Mesa. Make sure the graphics stack is installed and up to date:
+
+```bash
+sudo apt update
+sudo apt install -y mesa-utils mesa-vulkan-drivers vulkan-tools libgl1-mesa-dri libglx-mesa0
+sudo apt full-upgrade -y
+```
+
+Verify:
+
+```bash
+glxinfo -B | grep -E "renderer|OpenGL version"
+vulkaninfo --summary
+```
+
+The renderer should mention `V3D 7.1`. If it says `llvmpipe`, the GPU driver is not active (software rendering).
+
+> ℹ️ Native x86_64 games use the libraries bundled in the Steam runtime. If a game reports missing graphics libraries, install the needed x86_64 packages through the Box64 environment you use.
+
+### 5. Windows Games with Wine (via Box64)
+
+x86_64 Wine runs through Box64. Proton-GE does **not** work directly on ARM, so use plain Wine.
+
+Install the prerequisites:
+
+```bash
+sudo apt install -y cabextract p7zip-full unzip winetricks
+```
+
+Download an x86_64 Wine build (check the latest release at https://github.com/Kron4ek/Wine-Builds/releases and set `WINE_VER` accordingly):
+
+```bash
+cd ~
+WINE_VER="9.0"   # example, replace with the latest version you want
+wget "https://github.com/Kron4ek/Wine-Builds/releases/download/${WINE_VER}/wine-${WINE_VER}-amd64.tar.xz"
+tar -xf wine-${WINE_VER}-amd64.tar.xz
+mv wine-${WINE_VER}-amd64 ~/wine
+rm -f wine-${WINE_VER}-amd64.tar.xz
+```
+
+Create launcher wrappers:
+
+```bash
+sudo tee /usr/local/bin/wine64 > /dev/null << 'EOF'
+#!/bin/bash
+exec box64 "$HOME/wine/bin/wine64" "$@"
+EOF
+
+sudo tee /usr/local/bin/wineserver > /dev/null << 'EOF'
+#!/bin/bash
+exec box64 "$HOME/wine/bin/wineserver" "$@"
+EOF
+
+sudo chmod +x /usr/local/bin/wine64 /usr/local/bin/wineserver
+```
+
+Initialize the Wine prefix and run a program:
+
+```bash
+export WINEPREFIX=$HOME/.wine64
+export WINEARCH=win64
+wine64 wineboot --init
+wine64 /path/to/game.exe
+```
+
+Install common components with Winetricks (optional):
+
+```bash
+WINE=/usr/local/bin/wine64 winetricks corefonts vcrun2019
+```
+
+#### DXVK vs WineD3D
+
+| Renderer | Notes |
+|---|---|
+| **WineD3D** (default) | Translates DirectX to OpenGL. Slower but the most compatible |
+| **DXVK** | Translates DirectX 9/10/11 to Vulkan. Faster when it works, but V3DV Vulkan support is limited, so many games fail |
+
+Try WineD3D first. To test DXVK:
+
+```bash
+WINE=/usr/local/bin/wine64 winetricks dxvk
+```
+
+To go back to WineD3D:
+
+```bash
+WINE=/usr/local/bin/wine64 winetricks --force d3d9 d3d10core d3d11 dxgi
+```
+
+### 6. ZRAM and Swap Tuning
+
+Compressed RAM swap reduces stuttering when memory fills up. Steam and games use RAM quickly.
+
+```bash
+sudo apt install -y zram-tools
+```
+
+Configure:
+
+```bash
+sudo tee /etc/default/zramswap > /dev/null << 'EOF'
+ALGO=zstd
+PERCENT=50
+PRIORITY=100
+EOF
+
+sudo systemctl restart zramswap
+```
+
+Set swappiness (a higher value is normal when swap lives in compressed RAM):
+
+```bash
+echo "vm.swappiness=100" | sudo tee /etc/sysctl.d/99-swappiness.conf
+sudo sysctl --system
+```
+
+Verify:
+
+```bash
+swapon --show
+free -h
+cat /proc/sys/vm/swappiness
+```
+
+> ℹ️ ZRAM helps most on 4 GB / 8 GB models. If you run games from an SD card, loading will still be slow. A USB 3.0 SSD is strongly recommended.
+
 
 # Fast Installation  
 
