@@ -282,12 +282,30 @@ Run
 steam &
 ```
 </details>
+<br><br>
 </details>
 
 <details>
 <summary>Screen --> Phone Screen</summary>
 <details>
 <summary>English</summary>
+
+```
+                                  (phone hotspot / USB tethering)
+      \  |  /
+       \ | /
+   .---------.                    .------------------------.
+   | .-----. |                    |    RASPBERRY PI 5      |
+   | | VNC | |  USB Tethering     |  [VNC Server]          |
+   | | App |<==================>  | USB-A <-- phone        |
+   | '-----' |  (internet + VNC)  |  [AI HAT - PCIe]       |
+   |   ( )   |                    '-----------+------------'
+   '---------'                                |  USB-C 5V/5A
+                                      .-------+-------.
+                                      |   POWER BANK  |
+                                      '---------------'
+```
+
   ## 📦 Setup
 
 Directory Structures
@@ -306,24 +324,6 @@ Directory Structures
 ├
 ├── /etc/apt/sources.list.d/box64.list
 └── /etc/apt/sources.list.d/box86.list
-```
-
-  # 🍓 raspberry-pi5_ai-hat_phone-vnc
-
-```
-                                  (phone hotspot / USB tethering)
-      \  |  /
-       \ | /
-   .---------.                    .------------------------.
-   | .-----. |                    |    RASPBERRY PI 5      |
-   | | VNC | |  USB Tethering     |  [VNC Server]          |
-   | | App |<==================>  | USB-A <-- phone        |
-   | '-----' |  (internet + VNC)  |  [AI HAT - PCIe]       |
-   |   ( )   |                    '-----------+------------'
-   '---------'                                |  USB-C 5V/5A
-                                      .-------+-------.
-                                      |   POWER BANK  |
-                                      '---------------'
 ```
 
 ## 👀 Overview
@@ -833,7 +833,24 @@ chmod +x install.sh
 
 <details>
 <summary>Turkce</summary>
-  ## 📦 Kurulum
+
+```
+                                  (telefon hotspot / USB tethering)
+      \  |  /
+       \ | /
+   .---------.                    .------------------------.
+   | .-----. |                    |    RASPBERRY PI 5      |
+   | | VNC | |  USB Tethering     |  [VNC Server]          |
+   | | App |<==================>  | USB-A <-- telefon      |
+   | '-----' |  (internet + VNC)  |  [AI HAT - PCIe]       |
+   |   ( )   |                    '-----------+------------'
+   '---------'                                |  USB-C 5V/5A
+                                      .-------+-------.
+                                      |   POWERBANK   |
+                                      '---------------'
+```
+
+## 📦 Kurulum
 
 Dizin Yapıları
 
@@ -851,24 +868,6 @@ Dizin Yapıları
 ├
 ├── /etc/apt/sources.list.d/box64.list
 └── /etc/apt/sources.list.d/box86.list
-```
-  
-  # 🍓 raspberry-pi5_ai-hat_phone-vnc
-
-```
-                                  (telefon hotspot / USB tethering)
-      \  |  /
-       \ | /
-   .---------.                    .------------------------.
-   | .-----. |                    |    RASPBERRY PI 5      |
-   | | VNC | |  USB Tethering     |  [VNC Server]          |
-   | | App |<==================>  | USB-A <-- telefon      |
-   | '-----' |  (internet + VNC)  |  [AI HAT - PCIe]       |
-   |   ( )   |                    '-----------+------------'
-   '---------'                                |  USB-C 5V/5A
-                                      .-------+-------.
-                                      |   POWERBANK   |
-                                      '---------------'
 ```
 
 ## 👀 Genel Bakış
