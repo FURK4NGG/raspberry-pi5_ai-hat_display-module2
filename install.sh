@@ -4,6 +4,7 @@ set -e
 
 CONFIG_TXT="/boot/firmware/config.txt"
 XSESSIONRC="$HOME/.xsessionrc"
+WINE_VER="9.0"   # Kron4ek Wine-Builds release tag, change if you want another version
 
 # ---------------------------------------------------------
 # Helpers
@@ -46,7 +47,7 @@ raspi_nonint() {
 }
 
 # ---------------------------------------------------------
-# 0. Screen selection
+# 0. Screen selection and options
 # ---------------------------------------------------------
 echo "========================================================="
 echo " Raspberry Pi 5 AI-HAT Setup"
@@ -67,20 +68,28 @@ while [ -z "$SCREEN" ]; do
     esac
 done
 
+INSTALL_HAILO=0
+POWER_5A=0
 if [ "$SCREEN" = "phone" ]; then
     echo ">> Selected: Phone (RealVNC)"
     if ask_yes_no "Is an AI HAT (Hailo) connected to the PCIe port?" "y"; then
         INSTALL_HAILO=1
-    else
-        INSTALL_HAILO=0
     fi
     if ask_yes_no "Does your power bank truly deliver 5V/5A (enables usb_max_current_enable)?" "n"; then
         POWER_5A=1
-    else
-        POWER_5A=0
     fi
 else
     echo ">> Selected: Touch Display Module"
+fi
+
+echo
+INSTALL_GAMING=0
+INSTALL_WINE=0
+if ask_yes_no "Install gaming performance tweaks (CPU governor, GameMode, Box64, Mesa, ZRAM)?" "y"; then
+    INSTALL_GAMING=1
+    if ask_yes_no "Also install Wine for Windows games (large download)?" "n"; then
+        INSTALL_WINE=1
+    fi
 fi
 
 echo
@@ -89,7 +98,7 @@ echo "=== Starting Full Setup (screen: $SCREEN) ==="
 # ---------------------------------------------------------
 # 1. 4K Page Size Kernel (required for Box86/Steam)
 # ---------------------------------------------------------
-echo "[1/7] Checking kernel page size..."
+echo "[1/8] Checking kernel page size..."
 if [ -f "$CONFIG_TXT" ]; then
     if ! grep -q "^kernel=kernel8.img" "$CONFIG_TXT"; then
         echo ">> Appending 4K kernel (kernel=kernel8.img)..."
@@ -100,7 +109,7 @@ fi
 # ---------------------------------------------------------
 # 2. System packages and dependencies
 # ---------------------------------------------------------
-echo "[2/7] Installing required system packages..."
+echo "[2/8] Installing required system packages..."
 sudo apt update
 
 COMMON_PKGS="git curl wget xdotool xkbset python3-pygame python3-pip python3-pyqt5 python3-opencv python3-numpy libcamera-tools"
@@ -121,7 +130,7 @@ fi
 # ---------------------------------------------------------
 # 3. Screen-specific configuration
 # ---------------------------------------------------------
-echo "[3/7] Applying $SCREEN configuration..."
+echo "[3/8] Applying $SCREEN configuration..."
 mkdir -p "$HOME/.config/autostart"
 
 if [ "$SCREEN" = "display" ]; then
@@ -199,7 +208,7 @@ fi
 # ---------------------------------------------------------
 # 4. KOReader installation
 # ---------------------------------------------------------
-echo "[4/7] Downloading and installing KOReader..."
+echo "[4/8] Downloading and installing KOReader..."
 KO_URL=$(curl -s https://api.github.com/repos/koreader/koreader/releases/latest | grep "browser_download_url.*arm64.*\.deb" | cut -d '"' -f 4 | head -n 1)
 if [ -n "$KO_URL" ]; then
     wget -qO /tmp/koreader.deb "$KO_URL"
@@ -210,7 +219,7 @@ fi
 # ---------------------------------------------------------
 # 5. RPiCamGUI installation
 # ---------------------------------------------------------
-echo "[5/7] Cloning RPiCamGUI repository..."
+echo "[5/8] Cloning RPiCamGUI repository..."
 if [ ! -d "$HOME/RPiCamGUI" ]; then
     git clone https://github.com/Gordon999/RPiCamGUI.git "$HOME/RPiCamGUI"
     chmod +x "$HOME/RPiCamGUI/RPiCamGUI.py"
@@ -219,7 +228,7 @@ fi
 # ---------------------------------------------------------
 # 6. Steam (Box86 and Box64) setup
 # ---------------------------------------------------------
-echo "[6/7] Configuring Box86, Box64, and Steam..."
+echo "[6/8] Configuring Box86, Box64, and Steam..."
 sudo dpkg --add-architecture armhf
 
 sudo wget -q https://ryanfortner.github.io/box64-debs/box64.list -O /etc/apt/sources.list.d/box64.list
@@ -228,7 +237,9 @@ wget -qO- https://ryanfortner.github.io/box64-debs/KEY.gpg | gpg --dearmor | sud
 wget -qO- https://ryanfortner.github.io/box86-debs/KEY.gpg | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/box86-debs-archive-keyring.gpg > /dev/null
 
 sudo apt update
-sudo apt install -y box64-rpi5arm64 box86-generic-arm:armhf libgl1-mesa-dri:armhf libgl1-mesa-glx:armhf
+sudo apt install -y box64-rpi5arm64 box86-generic-arm:armhf libgl1-mesa-dri:armhf
+# libgl1-mesa-glx was removed in Bookworm, libglx-mesa0 replaces it
+sudo apt install -y libgl1-mesa-glx:armhf 2>/dev/null || sudo apt install -y libglx-mesa0:armhf || echo "[!] Could not install armhf GLX library"
 
 if [ ! -f "/usr/local/bin/steam" ]; then
     wget -qO /tmp/install_steam.sh https://raw.githubusercontent.com/ptitSeb/box86/master/install_steam.sh
@@ -238,9 +249,114 @@ if [ ! -f "/usr/local/bin/steam" ]; then
 fi
 
 # ---------------------------------------------------------
-# 7. Desktop launchers (.desktop)
+# 7. Gaming performance tweaks
 # ---------------------------------------------------------
-echo "[7/7] Generating desktop shortcuts..."
+if [ "$INSTALL_GAMING" -eq 1 ]; then
+    echo "[7/8] Applying gaming performance tweaks..."
+
+    # --- 7.1 CPU governor: performance ---
+    echo "[*] Setting CPU governor to performance (systemd service)..."
+    sudo tee /etc/systemd/system/cpu-performance.service > /dev/null << 'GOV_EOF'
+[Unit]
+Description=Set CPU governor to performance
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'for g in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do echo performance > $g; done'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+GOV_EOF
+    sudo systemctl daemon-reload
+    sudo systemctl enable --now cpu-performance.service || echo "[!] Could not enable cpu-performance.service"
+
+    # --- 7.2 GameMode and MangoHud ---
+    echo "[*] Installing GameMode and MangoHud..."
+    sudo apt install -y gamemode mangohud || echo "[!] gamemode/mangohud installation failed"
+    sudo usermod -aG gamemode "$USER" 2>/dev/null || true
+
+    # --- 7.3 Box64 performance profile (example only, per-game use recommended) ---
+    echo "[*] Creating Box64 example profile..."
+    if [ ! -f /etc/box64.box64rc ]; then
+        sudo tee /etc/box64.box64rc > /dev/null << 'BOX_EOF'
+# Box64 per-game profiles.
+# Aggressive options speed things up but can break some games,
+# so enable them per game and test. Option names can change between
+# Box64 versions, check the official documentation if something fails.
+#
+# Example (uncomment and replace the section name with the game's executable):
+#
+# [hl2_linux]
+# BOX64_DYNAREC_BIGBLOCK=2
+# BOX64_DYNAREC_FASTNAN=1
+# BOX64_DYNAREC_FASTROUND=1
+# BOX64_DYNAREC_CALLRET=1
+BOX_EOF
+    else
+        echo ">> /etc/box64.box64rc already exists, leaving it unchanged."
+    fi
+
+    # --- 7.4 Mesa / V3D driver check ---
+    echo "[*] Installing Mesa / Vulkan packages..."
+    sudo apt install -y mesa-utils mesa-vulkan-drivers vulkan-tools libgl1-mesa-dri libglx-mesa0 || echo "[!] Mesa package installation failed"
+
+    # --- 7.5 Wine (optional) ---
+    if [ "$INSTALL_WINE" -eq 1 ]; then
+        echo "[*] Installing Wine $WINE_VER (x86_64, via Box64)..."
+        sudo apt install -y cabextract p7zip-full unzip winetricks || echo "[!] Wine prerequisites failed"
+
+        if [ ! -d "$HOME/wine" ]; then
+            WINE_FILE="wine-${WINE_VER}-amd64.tar.xz"
+            if wget -qO "/tmp/$WINE_FILE" "https://github.com/Kron4ek/Wine-Builds/releases/download/${WINE_VER}/${WINE_FILE}"; then
+                tar -xf "/tmp/$WINE_FILE" -C "$HOME"
+                mv "$HOME/wine-${WINE_VER}-amd64" "$HOME/wine"
+                rm -f "/tmp/$WINE_FILE"
+            else
+                echo "[!] Wine download failed (check WINE_VER at the top of this script)"
+                rm -f "/tmp/$WINE_FILE"
+            fi
+        else
+            echo ">> $HOME/wine already exists, skipping download."
+        fi
+
+        if [ -d "$HOME/wine" ]; then
+            sudo tee /usr/local/bin/wine64 > /dev/null << 'WINE_EOF'
+#!/bin/bash
+exec box64 "$HOME/wine/bin/wine64" "$@"
+WINE_EOF
+            sudo tee /usr/local/bin/wineserver > /dev/null << 'WINESRV_EOF'
+#!/bin/bash
+exec box64 "$HOME/wine/bin/wineserver" "$@"
+WINESRV_EOF
+            sudo chmod +x /usr/local/bin/wine64 /usr/local/bin/wineserver
+
+            add_user_line "export WINEPREFIX=\$HOME/.wine64" "$HOME/.profile"
+            add_user_line "export WINEARCH=win64" "$HOME/.profile"
+            echo ">> Wine installed. Initialize the prefix after reboot with: wine64 wineboot --init"
+        fi
+    fi
+
+    # --- 7.6 ZRAM and swap tuning ---
+    echo "[*] Configuring ZRAM and swappiness..."
+    sudo apt install -y zram-tools || echo "[!] zram-tools installation failed"
+    sudo tee /etc/default/zramswap > /dev/null << 'ZRAM_EOF'
+ALGO=zstd
+PERCENT=50
+PRIORITY=100
+ZRAM_EOF
+    sudo systemctl restart zramswap 2>/dev/null || echo "[!] Could not restart zramswap"
+    echo "vm.swappiness=100" | sudo tee /etc/sysctl.d/99-swappiness.conf > /dev/null
+    sudo sysctl --system > /dev/null || true
+else
+    echo "[7/8] Skipping gaming performance tweaks."
+fi
+
+# ---------------------------------------------------------
+# 8. Desktop launchers (.desktop)
+# ---------------------------------------------------------
+echo "[8/8] Generating desktop shortcuts..."
 mkdir -p "$HOME/Desktop"
 
 if [ "$SCREEN" = "display" ]; then
@@ -307,6 +423,17 @@ if [ "$SCREEN" = "phone" ]; then
     echo "  3. Find the Pi IP:  hostname -I"
     echo "  4. Open RealVNC Viewer on the phone and connect (IP or Cloud)"
     echo "     (For Cloud: sign in to RealVNC from the VNC icon on the Pi)"
+fi
+if [ "$INSTALL_GAMING" -eq 1 ]; then
+    echo
+    echo "Gaming tips:"
+    echo "  - Check throttling:  vcgencmd get_throttled   (0x0 = OK)"
+    echo "  - Check GPU driver:  glxinfo -B | grep renderer   (should show V3D 7.1)"
+    echo "  - Steam launch options:  gamemoderun %command%"
+    echo "  - Box64 per-game profiles:  /etc/box64.box64rc"
+    if [ "$INSTALL_WINE" -eq 1 ]; then
+        echo "  - Wine: after reboot run  wine64 wineboot --init"
+    fi
 fi
 echo
 echo "[!] A system reboot is required to activate the 4K kernel"
