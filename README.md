@@ -41,7 +41,44 @@ Directory Structures
 ├── /usr/share/matchbox-keyboard/keyboard.xml  
 └── ~/.config/openbox/lxde-pi-rc.xml  
 
+```
+# 1. Update the system and install all required packages for Display, Camera, and Hailo NPU
+sudo apt update && sudo apt full-upgrade -y
+sudo apt install --reinstall -y \
+    hailo-all \
+    rpicam-apps \
+    libcamera-apps \
+    python3-picamera2 \
+    python3-libcamera \
+    python3-kms++ \
+    python3-numpy \
+    python3-simplejpeg \
+    python3-gpiozero \
+    ffmpeg
 
+# 2. Configure Camera (IMX708) access permissions and load the kernel module
+sudo usermod -aG video,render,gpio $USER
+sudo modprobe imx708 2>/dev/null || true
+sudo chmod 666 /dev/video* /dev/media* 2>/dev/null || true
+
+# 3. Disable early loading of Hailo at boot to prevent display conflicts
+sudo rm -f /etc/modules-load.d/hailo.conf
+echo "blacklist hailo_pci" | sudo tee /etc/modprobe.d/hailo-blacklist.conf > /dev/null
+sudo depmod -a
+
+# 4. Clean up any conflicting legacy systemd delayed-load service remnants
+sudo systemctl disable --now hailo-delayed-load.service 2>/dev/null || true
+sudo rm -f /etc/systemd/system/hailo-delayed-load.service /etc/systemd/system/graphical.target.wants/hailo-delayed-load.service /etc/systemd/system/multi-user.target.wants/hailo-delayed-load.service
+sudo systemctl daemon-reload
+
+# 5. Add a cron job to load the AI HAT driver 5 seconds after display boot
+(sudo crontab -l 2>/dev/null | grep -v "hailo_pci"; echo "@reboot sleep 5 && /sbin/modprobe hailo_pci") | sudo crontab -
+
+# 6. Load the driver in the current session and verify both Camera and Hailo NPU
+sudo modprobe hailo_pci
+ls -l /dev/hailo0 && hailortcli fw-control identify
+rpicam-hello --list-cameras
+```
 
 ```
 sudo apt update  
